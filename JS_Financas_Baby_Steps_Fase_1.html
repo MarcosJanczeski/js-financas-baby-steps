@@ -1,0 +1,333 @@
+<html><head><meta charset='utf-8'><title>Fase 1</title></head><body><h1>JS Vanilla – Finanças – Baby Steps — Fase 1 (VS Code + Navegador + Git/GitHub)</h1>
+<p>Objetivo: criar a base de um sistema de finanças (receitas, despesas e saldo) usando HTML, CSS e JavaScript puro, com persistência em localStorage e versionamento no Git/GitHub. Este material detalha o código linha a linha quando surgem comandos e conceitos novos, inclui dicas de UX e referências oficiais.</p>
+<h2>1. Estrutura de pastas e arquivos</h2>
+<ul><li>Pasta do projeto: js-financas-baby-steps/</li><li>Arquivos básicos: index.html, style.css, main.js</li><li>Abra a pasta no VS Code e use o Live Server para visualizar no navegador.</li></ul>
+<h2>2. index.html — estrutura base</h2>
+<pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="pt-BR"&gt;
+&lt;head&gt;
+  &lt;meta charset="UTF-8" /&gt;
+  &lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;
+  &lt;title&gt;JS Finanças - Baby Steps&lt;/title&gt;
+  &lt;link rel="stylesheet" href="style.css"&gt;
+&lt;/head&gt;
+&lt;body&gt;
+  &lt;h1&gt;JS Finanças 💰&lt;/h1&gt;
+
+  &lt;section class="resumo"&gt;
+    &lt;div class="card"&gt;
+      &lt;h3&gt;Entradas&lt;/h3&gt;
+      &lt;p id="total-entradas"&gt;R$ 0,00&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="card"&gt;
+      &lt;h3&gt;Saídas&lt;/h3&gt;
+      &lt;p id="total-saidas"&gt;R$ 0,00&lt;/p&gt;
+    &lt;/div&gt;
+    &lt;div class="card destaque"&gt;
+      &lt;h3&gt;Saldo&lt;/h3&gt;
+      &lt;p id="saldo" class="saldo neutro"&gt;R$ 0,00&lt;/p&gt;
+      &lt;small id="mensagem-saldo"&gt;Vamos começar registrando suas transações.&lt;/small&gt;
+    &lt;/div&gt;
+  &lt;/section&gt;
+
+  &lt;section class="cartao"&gt;
+    &lt;h2&gt;Adicionar transação&lt;/h2&gt;
+    &lt;form id="form-transacao"&gt;
+      &lt;label&gt;
+        Descrição
+        &lt;input type="text" id="descricao" required placeholder="Ex.: Mercado, Salário"&gt;
+      &lt;/label&gt;
+
+      &lt;label&gt;
+        Valor (use negativo para despesa)
+        &lt;input type="number" id="valor" step="0.01" required placeholder="Ex.: -50.90 ou 1200"&gt;
+      &lt;/label&gt;
+
+      &lt;label&gt;
+        Tipo
+        &lt;select id="tipo" required&gt;
+          &lt;option value="receita"&gt;Receita&lt;/option&gt;
+          &lt;option value="despesa"&gt;Despesa&lt;/option&gt;
+        &lt;/select&gt;
+      &lt;/label&gt;
+
+      &lt;button type="submit"&gt;Adicionar&lt;/button&gt;
+      &lt;button type="button" id="btn-limpar" class="secundario"&gt;Limpar tudo&lt;/button&gt;
+    &lt;/form&gt;
+  &lt;/section&gt;
+
+  &lt;section class="cartao"&gt;
+    &lt;h2&gt;Transações&lt;/h2&gt;
+    &lt;ul id="lista-transacoes"&gt;&lt;/ul&gt;
+    &lt;p id="vazio" class="muted"&gt;Nenhuma transação por enquanto.&lt;/p&gt;
+  &lt;/section&gt;
+
+  &lt;script src="main.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+<h4>Comentários / conceitos</h4>
+<ul><li><!DOCTYPE html> — define o documento como HTML5.</li><li><html lang="pt-BR"> — informa idioma (afeta acessibilidade e SEO).</li><li><meta charset="UTF-8"/> — habilita acentuação correta.</li><li><meta name="viewport"...> — permite layout responsivo em celular.</li><li><link rel="stylesheet" href="style.css"> — conecta o CSS externo.</li><li><script src="main.js"></script> — carrega o JavaScript ao final do body, após os elementos do DOM.</li></ul>
+<h4>Referências</h4>
+<ul><li>MDN: https://developer.mozilla.org/pt-BR/docs/Web/HTML</li><li>W3Schools (HTML): https://www.w3schools.com/html/</li></ul>
+<h2>3. style.css — estilos essenciais</h2>
+<pre><code>body {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  max-width: 720px;
+  margin: 24px auto;
+  padding: 0 16px;
+  line-height: 1.5;
+}
+
+h1 { margin-bottom: 16px; }
+
+.cartao {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+form {
+  display: grid;
+  gap: 12px;
+}
+
+input, select, button {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+button {
+  cursor: pointer;
+}
+
+.resumo {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.card.destaque { background: #f8fafc; }
+
+.saldo { font-size: 1.25rem; font-weight: 700; margin: 6px 0; }
+.saldo.verde { color: #16a34a; }
+.saldo.vermelho { color: #dc2626; }
+.saldo.neutro { color: #111827; }
+
+.muted { color: #6b7280; }
+
+ul#lista-transacoes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul#lista-transacoes li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.tag {
+  font-size: .75rem;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.valor { min-width: 140px; text-align: right; }
+
+button.secundario {
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+
+button.secundario:hover { background: #e5e7eb; }</code></pre>
+<h4>Comentários / conceitos</h4>
+<ul><li>Classes utilitárias para layout (grid, cards) e legibilidade.</li><li>.saldo.verde/vermelho — feedback visual para situação do usuário.</li><li>Lista de transações com layout em linha (descrição à esquerda, valor + remover à direita).</li></ul>
+<h4>Referências</h4>
+<ul><li>MDN CSS: https://developer.mozilla.org/pt-BR/docs/Web/CSS</li><li>W3Schools (CSS): https://www.w3schools.com/css/</li></ul>
+<h2>4. main.js — lógica do app (com explicação de comandos)</h2>
+<pre><code>console.log("JS Finanças iniciado.");
+
+// Util: formata número em Real (pt-BR)
+const brl = (n) =&gt; n.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+
+// DOM: captura elementos da página para manipulação via JS
+const form = document.getElementById("form-transacao");
+const inputDescricao = document.getElementById("descricao");
+const inputValor = document.getElementById("valor");
+const selectTipo = document.getElementById("tipo");
+const lista = document.getElementById("lista-transacoes");
+const totalEntradas = document.getElementById("total-entradas");
+const totalSaidas = document.getElementById("total-saidas");
+const saldo = document.getElementById("saldo");
+const msgSaldo = document.getElementById("mensagem-saldo");
+const btnLimpar = document.getElementById("btn-limpar");
+const vazio = document.getElementById("vazio");
+
+// Estado: carrega do localStorage (ou array vazio)
+let transacoes = JSON.parse(localStorage.getItem("transacoes")) || [];
+
+// Persistência
+function salvar() {
+  localStorage.setItem("transacoes", JSON.stringify(transacoes));
+}
+
+// Renderização/atualização de tela
+function atualizarLista() {
+  lista.innerHTML = "";
+
+  // Ordenação: mais recente primeiro
+  const ordenadas = [...transacoes].sort((a, b) =&gt; (b.createdAt || 0) - (a.createdAt || 0));
+
+  let entradas = 0;
+  let saidas = 0;
+
+  ordenadas.forEach((t) =&gt; {
+    const li = document.createElement("li");
+
+    const esquerda = document.createElement("div");
+    esquerda.style.display = "flex";
+    esquerda.style.alignItems = "center";
+    esquerda.style.gap = "8px";
+
+    const desc = document.createElement("span");
+    desc.textContent = t.descricao;
+
+    const tag = document.createElement("span");
+    tag.className = "tag";
+    tag.textContent = t.tipo;
+
+    esquerda.appendChild(desc);
+    esquerda.appendChild(tag);
+
+    const direita = document.createElement("div");
+    direita.style.display = "flex";
+    direita.style.alignItems = "center";
+    direita.style.gap = "8px";
+
+    const valorSpan = document.createElement("span");
+    valorSpan.className = "valor";
+    valorSpan.textContent = brl(t.valor);
+    if (t.tipo === "despesa") valorSpan.style.color = "#dc2626";
+    if (t.tipo === "receita") valorSpan.style.color = "#16a34a";
+
+    const btnRemover = document.createElement("button");
+    btnRemover.textContent = "❌";
+    btnRemover.title = "Remover";
+    btnRemover.onclick = () =&gt; {
+      const idxReal = transacoes.findIndex(x =&gt; x.id === t.id);
+      if (idxReal &gt;= 0) {
+        transacoes.splice(idxReal, 1);
+        salvar();
+        atualizarLista();
+      }
+    };
+
+    direita.appendChild(valorSpan);
+    direita.appendChild(btnRemover);
+
+    li.appendChild(esquerda);
+    li.appendChild(direita);
+
+    lista.appendChild(li);
+
+    // Totais (abordagem minimalista): saídas sempre positiva
+    if (t.tipo === "receita") entradas += t.valor;
+    else saidas -= t.valor;
+  });
+
+  vazio.style.display = ordenadas.length === 0 ? "block" : "none";
+
+  totalEntradas.textContent = brl(entradas);
+  totalSaidas.textContent = brl(saidas);
+  const saldoTotal = entradas - saidas;
+  saldo.textContent = brl(saldoTotal);
+
+  saldo.classList.remove("verde", "vermelho", "neutro");
+  if (saldoTotal &gt; 0) {
+    saldo.classList.add("verde");
+    msgSaldo.textContent = "Parabéns, você está no azul!";
+  } else if (saldoTotal &lt; 0) {
+    saldo.classList.add("vermelho");
+    msgSaldo.textContent = "Atenção: saldo negativo. Reveja despesas.";
+  } else {
+    saldo.classList.add("neutro");
+    msgSaldo.textContent = "Saldo zerado. Vamos registrar as próximas transações.";
+  }
+}
+
+// Submissão do formulário: captura e normaliza valores
+form.addEventListener("submit", (event) =&gt; {
+  event.preventDefault();
+
+  const descricao = inputDescricao.value.trim();
+  let valor = Number(inputValor.value);
+  const tipo = selectTipo.value;
+
+  if (!descricao || isNaN(valor)) {
+    alert("Preencha a descrição e um valor numérico válido.");
+    return;
+  }
+
+  // Normalização mínima (garante sinal consistente sem reescrever lógica)
+  if (tipo === "despesa" &amp;&amp; valor &gt; 0) valor = -valor;
+  if (tipo === "receita" &amp;&amp; valor &lt; 0) valor = Math.abs(valor);
+
+  const nova = {
+    id: crypto.randomUUID ? crypto.randomUUID() : String(Date.now() + Math.random()),
+    descricao,
+    tipo,
+    valor,
+    createdAt: Date.now()
+  };
+
+  transacoes.push(nova);
+  salvar();
+  atualizarLista();
+
+  form.reset();
+  inputDescricao.focus();
+});
+
+// Limpar tudo
+btnLimpar.addEventListener("click", () =&gt; {
+  if (confirm("Tem certeza que deseja apagar todas as transações?")) {
+    transacoes = [];
+    salvar();
+    atualizarLista();
+  }
+});
+
+// Inicializa a tela
+atualizarLista();</code></pre>
+<h4>Comentários / conceitos</h4>
+<ul><li>console.log — ajuda a inspecionar execuções no Console do navegador.</li><li>document.getElementById — referência elementos do DOM para leitura/escrita via JS.</li><li>localStorage.getItem/setItem — persistência simples no navegador (chave/valor em string).</li><li>Array.sort — ordena por createdAt para mostrar mais recentes primeiro.</li><li>document.createElement/appendChild — cria nós dinamicamente (li/spans/botões).</li><li>toLocaleString — formata valor em moeda pt-BR.</li><li>addEventListener('submit') — captura o envio do formulário e evita recarregar a página (preventDefault).</li><li>crypto.randomUUID — gera IDs únicos (fallback com Date.now + Math.random).</li></ul>
+<h4>Referências</h4>
+<ul><li>MDN DOM: https://developer.mozilla.org/pt-BR/docs/Web/API/Document_Object_Model</li><li>MDN localStorage: https://developer.mozilla.org/pt-BR/docs/Web/API/Window/localStorage</li><li>MDN addEventListener: https://developer.mozilla.org/pt-BR/docs/Web/API/EventTarget/addEventListener</li><li>W3Schools JavaScript: https://www.w3schools.com/js/</li></ul>
+<h2>5. Git e GitHub — fluxo básico</h2>
+<ul><li>Verificar Git: git --version</li><li>Configurar usuário (uma vez): git config --global user.name "Seu Nome"; git config --global user.email "seu-email@exemplo.com"</li><li>Iniciar repositório local: git init; git add .; git commit -m "chore: init"</li><li>Criar repositório no GitHub e conectar: git remote add origin <url></li><li>Sincronizar com remoto existente: git fetch origin; git pull --rebase origin main --allow-unrelated-histories</li><li>Enviar: git push -u origin main</li><li>Boas práticas: usar .gitignore (node_modules, dist, .vscode etc.)</li></ul>
+<h4>Referências</h4>
+<ul><li>Git Book: https://git-scm.com/book/pt-br/v2</li><li>GitHub Docs: https://docs.github.com/</li></ul>
+<h2>6. Testes e checklist de encerramento da Fase 1</h2>
+<ul><li>Formulário adiciona receita/despesa e exibe na lista.</li><li>Entradas, saídas e saldo formatados em BRL.</li><li>Saldo em verde/vermelho com mensagem dinâmica.</li><li>Ordenação por mais recente.</li><li>Botão de remover item e 'Limpar tudo' funcionando.</li><li>Dados persistem ao recarregar (localStorage).</li></ul>
+<h2>7. Próximos passos (Fase 2) — TypeScript</h2>
+<ul><li>Instalar TypeScript e criar tsconfig.json.</li><li>Migrar main.js → main.ts com tipagem para Transacao e funções.</li><li>Compilar com tsc e seguir rodando no navegador.</li><li>Preparar estrutura para React (Fase 3).</li></ul>
+<h2>Referências adicionais (oficiais e didáticas)</h2>
+<ul><li>MDN (JS): https://developer.mozilla.org/pt-BR/docs/Web/JavaScript</li><li>MDN (HTML): https://developer.mozilla.org/pt-BR/docs/Web/HTML</li><li>MDN (CSS): https://developer.mozilla.org/pt-BR/docs/Web/CSS</li><li>W3Schools (HTML/CSS/JS): https://www.w3schools.com/</li><li>Curso Git oficial: https://git-scm.com/book/pt-br/v2</li></ul></body></html>

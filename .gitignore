@@ -1,10 +1,5 @@
-# VS Code
 .vscode/
-
-# Sistema
-.DS_Store
-Thumbs.db
-
-# Node (para as próximas fases)
 node_modules/
 dist/
+.DS_Store
+Thumbs.db

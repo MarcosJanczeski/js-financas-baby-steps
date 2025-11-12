@@ -1,0 +1,25 @@
+{
+  "name": "js-financas-baby-steps",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MarcosJanczeski/js-financas-baby-steps.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/MarcosJanczeski/js-financas-baby-steps/issues"
+  },
+  "homepage": "https://github.com/MarcosJanczeski/js-financas-baby-steps#readme",
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}

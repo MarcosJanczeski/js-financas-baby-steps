@@ -1,15 +1,65 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>JS Finanças - Baby Steps</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
   <h1>JS Finanças 💰</h1>
-  <p id="mensagem">Carregando JavaScript...</p>
+
+  <section class="resumo">
+    <div class="card">
+      <h3>Entradas</h3>
+      <p id="total-entradas">R$ 0,00</p>
+    </div>
+    <div class="card">
+      <h3>Saídas</h3>
+      <p id="total-saidas">R$ 0,00</p>
+    </div>
+    <div class="card destaque">
+      <h3>Saldo</h3>
+      <p id="saldo" class="saldo neutro">R$ 0,00</p>
+      <small id="mensagem-saldo">Vamos começar registrando suas transações.</small>
+    </div>
+  </section>
+
+  <section class="cartao">
+    <h2>Adicionar transação</h2>
+    <form id="form-transacao">
+      <label>
+        Descrição
+        <input type="text" id="descricao" required placeholder="Ex.: Mercado, Salário">
+      </label>
+
+      <label>
+        Valor
+        <input type="number" id="valor" step="0.01" required>
+      </label>
+
+      <label>
+        Tipo
+        <select id="tipo" required>
+          <option value="receita">Receita</option>
+          <option value="despesa">Despesa</option>
+        </select>
+      </label>
+
+      <button type="submit">Adicionar</button>
+      <button type="button" id="btn-limpar" class="secundario">Limpar tudo</button>
+    </form>
+  </section>
+
+  <section class="cartao">
+    <h2>Transações</h2>
+    <ul id="lista-transacoes"></ul>
+    <p id="vazio" class="muted">Nenhuma transação por enquanto.</p>
+  </section>
 
   <script src="main.js"></script>
 </body>
+
 </html>
